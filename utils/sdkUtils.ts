@@ -1,4 +1,4 @@
-import { Hex, Address, encodeFunctionData } from "viem";
+import { Hex, Address } from "viem";
 import { clientA, clientB, clientC, } from '../config/config';
 import { PIL_TYPE } from "@story-protocol/core-sdk";
 import { processResponse } from "./utils";
@@ -322,9 +322,9 @@ export const mintLicenseTokens = async function (
 
 export const setPermission = async function (
     wallet: keyof typeof storyClients, 
-    ipId: Hex, 
-    signer: Hex, 
-    to: Hex, 
+    ipId: Address, 
+    signer: Address, 
+    to: Address, 
     permission: number, 
     waitForTransaction: boolean
 ) {
@@ -334,6 +334,98 @@ export const setPermission = async function (
         signer: signer,
         to: to,
         permission: permission,
+        txOptions: {
+            waitForTransaction: waitForTransaction,
+        }
+    })
+    console.log(JSON.stringify(response));
+    return response;
+};
+
+export const setAllPermissions = async function (
+    wallet: keyof typeof storyClients, 
+    ipId: Address, 
+    signer: Address,
+    permission: number, 
+    waitForTransaction: boolean
+) {
+    const storyClient = getStoryClient(wallet);
+    const response = await storyClient.permission.setAllPermissions({
+        ipId: ipId,
+        signer: signer,
+        permission: permission,
+        txOptions: {
+            waitForTransaction: waitForTransaction,
+        }
+    })
+    console.log(JSON.stringify(response));
+    return response;
+};
+
+export const setBatchPermissions = async function (
+    wallet: keyof typeof storyClients, 
+    permissions: {
+        ipId: Address, 
+        signer: Address,
+        to: Address,
+        permission: number, 
+        func?: string | undefined
+    }[],
+    waitForTransaction?: boolean | undefined
+) {
+    const storyClient = getStoryClient(wallet);
+    const response = await storyClient.permission.setBatchPermissions({
+        permissions: permissions,
+        txOptions: {
+            waitForTransaction: waitForTransaction,
+        }
+    })
+    console.log(JSON.stringify(response));
+    return response;
+};
+
+export const createSetPermissionSignature = async function (
+    wallet: keyof typeof storyClients, 
+    ipId: Address, 
+    signer: Address,
+    to: Address,
+    permission: number, 
+    func?: string | undefined,
+    deadline?: string | number | bigint | undefined,
+    waitForTransaction?: boolean
+) {
+    const storyClient = getStoryClient(wallet);
+    const response = await storyClient.permission.createSetPermissionSignature({
+        ipId: ipId,
+        signer: signer,
+        to: to,
+        permission: permission,
+        func: func,
+        deadline: deadline,
+        txOptions: {
+            waitForTransaction: waitForTransaction,
+        }
+    })
+    console.log(JSON.stringify(response));
+    return response;
+};
+
+export const createBatchPermissionSignature = async function (
+    wallet: keyof typeof storyClients, 
+    ipId: Address,
+    permissions: {
+        ipId: Address, 
+        signer: Address,
+        to: Address,
+        permission: number, 
+        func?: string | undefined
+    }[],
+    waitForTransaction?: boolean
+) {
+    const storyClient = getStoryClient(wallet);
+    const response = await storyClient.permission.createBatchPermissionSignature({
+        ipId: ipId,
+        permissions: permissions,
         txOptions: {
             waitForTransaction: waitForTransaction,
         }
@@ -523,7 +615,6 @@ export const createNFTCollection = async function (
     options?: { [key: string]: any }
 ) {
     const storyClient = getStoryClient(wallet);
-    storyClient.nftClient.spgClient
     const response = await storyClient.nftClient.createNFTCollection({
         name: name,
         symbol: symbol,
@@ -535,7 +626,6 @@ export const createNFTCollection = async function (
     console.log(JSON.stringify(response));
     return response;
 };
-
 
 export const ipAccountExecute = async function (
     wallet: keyof typeof storyClients, 
@@ -587,3 +677,13 @@ export const ipAccountExecuteWithSig = async function (
     return response;
 };
 
+export const getIpAccountNonce = async function (
+    wallet: keyof typeof storyClients, 
+    ipId: Address
+) {
+    const storyClient = getStoryClient(wallet);
+    const response = await storyClient.ipAccount.getIpAccountNonce(ipId);
+
+    console.log(response);    
+    return response;
+};
