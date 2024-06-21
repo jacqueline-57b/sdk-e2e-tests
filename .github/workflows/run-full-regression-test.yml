@@ -2,7 +2,7 @@ name: Run Full Regression Test
 
 on:
   push:
-    branches: [ "add-workflow" ]
+    branches: [ "add-workflow-1" ]
 
   pull_request:
     branches: [ "main" ]
