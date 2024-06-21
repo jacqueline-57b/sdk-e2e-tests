@@ -69,12 +69,12 @@ export const checkRoyaltyTokensCollected = async function(
     royaltyVaultIpId: Address,
     expectedRoyaltyTokensCollected: bigint
 ){
-    const responseAFromB = await expect(
+    const response = await expect(
         collectRoyaltyTokens(caller, parentIpId, royaltyVaultIpId, waitForTransaction)
     ).to.not.be.rejected;
 
-    expect(responseAFromB.txHash).to.be.a("string").and.not.empty;
-    expect(responseAFromB.royaltyTokensCollected).to.be.a('bigint').and.to.be.equal(expectedRoyaltyTokensCollected);
+    expect(response.txHash).to.be.a("string").and.not.empty;
+    expect(response.royaltyTokensCollected).to.be.a('bigint').and.to.be.equal(expectedRoyaltyTokensCollected);
 };
 
 export const getSnapshotId = async function(
@@ -103,7 +103,7 @@ export const checkClaimableRevenue = async function(
         royaltyClaimableRevenue(caller, royaltyVaultIpId, account, snapshotId, mintingFeeTokenAddress, waitForTransaction)
     ).to.not.be.rejected;
     
-    // expect(response).to.be.a("bigint").and.to.be.equal(expectedClaimableRevenue);
+    expect(response).to.be.a("bigint").and.to.be.equal(expectedClaimableRevenue);
 };
 
 export const claimRevenueByEOA = async function (
@@ -117,7 +117,7 @@ export const claimRevenueByEOA = async function (
     ).to.not.be.rejected;
 
     expect(response.txHash).to.be.a("string").and.not.empty;
-    // expect(response.claimableToken).to.be.a("bigint").to.be.equal(expectedClaimableToken);               
+    expect(response.claimableToken).to.be.a("bigint").to.be.equal(expectedClaimableToken);               
 };
 
 export const claimRevenueByIPA = async function (
@@ -132,7 +132,7 @@ export const claimRevenueByIPA = async function (
     ).to.not.be.rejected;
 
     expect(response.txHash).to.be.a("string").and.not.empty;
-    // expect(response.claimableToken).to.be.a("bigint").to.be.equal(expectedClaimableToken);               
+    expect(response.claimableToken).to.be.a("bigint").to.be.equal(expectedClaimableToken);               
 };
 
 export const transferTokenToEOA = async function(
@@ -142,7 +142,6 @@ export const transferTokenToEOA = async function(
     amount: bigint
 ){
     const royaltyVaultAddress = await getRoyaltyVaultAddress(caller, royaltyVaultIpId);
-    console.log(royaltyVaultAddress);
     
     const data = {
         abi: [
@@ -163,11 +162,9 @@ export const transferTokenToEOA = async function(
         args: [toAddress as Hex, amount]
     };
 
-    // const response = await expect(
-    const response = await
-        ipAccountExecute(caller, royaltyVaultAddress, 0, royaltyVaultIpId, encodeFunctionData(data), true)
-    console.log(response);    
-    // ).to.not.be.rejected;
+    const response = await expect(
+        ipAccountExecute(caller, royaltyVaultAddress, 0, royaltyVaultIpId, encodeFunctionData(data), true)  
+    ).to.not.be.rejected;
 
     expect(response.txHash).to.be.a("string").and.not.empty;
 };
@@ -203,11 +200,9 @@ export const transferTokenToEOAWithSig = async function(
         args: [toAddress as Hex, amount]
     };
 
-    // const response = await expect(
-    const response = await
+    const response = await expect(
         ipAccountExecuteWithSig(caller, royaltyVaultAddress, toAddress, 0, encodeFunctionData(data), signer, deadline, signature, true)
-    console.log(response);
-        // ).to.not.be.rejected;
+    ).to.not.be.rejected;
 
     expect(response.txHash).to.be.a("string").and.not.empty;
 };

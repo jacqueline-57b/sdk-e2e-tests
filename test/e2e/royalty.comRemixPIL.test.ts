@@ -1,16 +1,15 @@
-import { privateKeyA, privateKeyB, privateKeyC, mintingFeeTokenAddress, accountC, clientC, accountB, chainId, clientA, accountA } from '../../config/config'
+import { privateKeyA, privateKeyB, privateKeyC, mintingFeeTokenAddress, accountC, accountB, accountA } from '../../config/config'
 import { getTotalRTSupply} from '../../utils/utils'
-import { getRoyaltyVaultAddress, payRoyaltyOnBehalf, registerCommercialRemixPIL } from '../../utils/sdkUtils'
-import { mintNFTCreateRootIPandAttachPIL, mintNFTAndRegisterDerivative, checkRoyaltyTokensCollected, getSnapshotId,checkClaimableRevenue, claimRevenueByIPA, claimRevenueByEOA, transferTokenToEOA, transferTokenToEOAWithSig } from '../testUtils'
+import { payRoyaltyOnBehalf, registerCommercialRemixPIL } from '../../utils/sdkUtils'
+import { mintNFTCreateRootIPandAttachPIL, mintNFTAndRegisterDerivative, checkRoyaltyTokensCollected, getSnapshotId,checkClaimableRevenue, claimRevenueByIPA, claimRevenueByEOA, transferTokenToEOA } from '../testUtils'
 
 import { expect } from 'chai'
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 chai.use(chaiAsPromised);
-import { Address, Hex } from 'viem';
+import { Address } from 'viem';
 import '../setup';
-import { AccessPermission, getPermissionSignature } from '@story-protocol/core-sdk'
-import { coreMetadataModuleAbi } from '@story-protocol/core-sdk/dist/declarations/src/abi/generated'
+import addContext from 'mochawesome/addContext'
 
 let ipIdA: Address;
 let ipIdB: Address;
@@ -25,7 +24,7 @@ let TOTAL_RT_SUPPLY: number;
 describe("SDK E2E Test - Royalty", function () {
     this.beforeAll("Get total RT supply", async function (){
         TOTAL_RT_SUPPLY = await getTotalRTSupply();
-        console.log("TOTAL_RT_SUPPLY: " + TOTAL_RT_SUPPLY);
+        addContext(this, "TOTAL_RT_SUPPLY:" + TOTAL_RT_SUPPLY);
     });
 
     describe("Commercial Remix PIL - Claim Minting Fee by IPA account", function () {
@@ -34,11 +33,14 @@ describe("SDK E2E Test - Royalty", function () {
         before("Register parent and derivative IP Assets", async function () {    
             // Register commercial use PIL
             const licenseTermsId = Number((await registerCommercialRemixPIL("A", mintingFee, commercialRevShare, mintingFeeTokenAddress, true)).licenseTermsId);
+            addContext(this, "licenseTermsId:" + licenseTermsId);
 
             // root IP: ipIdA
             ipIdA = await mintNFTCreateRootIPandAttachPIL("A", privateKeyA, licenseTermsId);
+            addContext(this, "Root IP - ipIdA:" + ipIdA);
             // ipIdB is ipIdA's derivative IP
             ipIdB = await mintNFTAndRegisterDerivative("B", privateKeyB, [ipIdA], [licenseTermsId]);
+            addContext(this, "ipIdA's Derivative IP - ipIdB:" + ipIdB);
         });
 
         step("ipIdA collect royalty tokens from ipIdB", async function () {
@@ -89,15 +91,20 @@ describe("SDK E2E Test - Royalty", function () {
         before("Register parent and derivative IP Assets", async function () {
             // create license terms
             const licenseTermsId = Number((await registerCommercialRemixPIL("A", mintingFee, commercialRevShare, mintingFeeTokenAddress, true)).licenseTermsId);
-            
+            addContext(this, "licenseTermsId:" + licenseTermsId);
+
             // root IP: ipIdA
             ipIdA = await mintNFTCreateRootIPandAttachPIL("A", privateKeyA, licenseTermsId);
+            addContext(this, "Root IP - ipIdA:" + ipIdA);
             // ipIdB is ipIdA's derivative IP
             ipIdB = await mintNFTAndRegisterDerivative("B", privateKeyB, [ipIdA], [licenseTermsId]);
+            addContext(this, "ipIdA's Derivative IP - ipIdB:" + ipIdB);
             // ipIdC is ipIdB's derivative IP
-            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]); 
+            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]);
+            addContext(this, "ipIdB's Derivative IP - ipIdC:" + ipIdC);
             // ipIdD is ipIdC's derivative IP
-            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);               
+            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]); 
+            addContext(this, "ipIdC's Derivative IP - ipIdD:" + ipIdD);              
         });
 
         step("ipIdA collect royalty tokens from ipIdB's vault account", async function () {
@@ -254,15 +261,20 @@ describe("SDK E2E Test - Royalty", function () {
         before("Register parent and derivative IP Assets", async function () {
             // create license terms
             const licenseTermsId = Number((await registerCommercialRemixPIL("A", mintingFee, commercialRevShare, mintingFeeTokenAddress, true)).licenseTermsId);
-            
+            addContext(this, "licenseTermsId:" + licenseTermsId);
+
             // root IP: ipIdA
             ipIdA = await mintNFTCreateRootIPandAttachPIL("A", privateKeyA, licenseTermsId);
+            addContext(this, "Root IP - ipIdA:" + ipIdA);
             // ipIdB is ipIdA's derivative IP
             ipIdB = await mintNFTAndRegisterDerivative("B", privateKeyB, [ipIdA], [licenseTermsId]);
+            addContext(this, "ipIA's derivative IP - ipIdB:" + ipIdB);
             // ipIdC is ipIdB's derivative IP
-            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]); 
+            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]);
+            addContext(this, "ipIB's derivative IP - ipIdC:" + ipIdC);
             // ipIdD is ipIdC's derivative IP
-            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);               
+            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);
+            addContext(this, "ipIC's derivative IP - ipIdD:" + ipIdD);             
         });
 
         step("ipIdA collect royalty tokens from ipIdB's vault account", async function () {
@@ -333,122 +345,27 @@ describe("SDK E2E Test - Royalty", function () {
         });        
     });
             
-    describe("Commercial Remix PIL - Claim Minting Fee and Revenue by EOA1", function () {
-        const mintingFee = 600;
-        const payAmount = 2000;
-        const commercialRevShare = 10;
+    describe("Commercial Remix PIL - Claim Minting Fee and Revenue by IPA account and EOA", function () {
+        const mintingFee = 200;
+        const payAmount = 1000;
+        const commercialRevShare = 20;
         before("Register parent and derivative IP Assets", async function () {
             // create license terms
             const licenseTermsId = Number((await registerCommercialRemixPIL("A", mintingFee, commercialRevShare, mintingFeeTokenAddress, true)).licenseTermsId);
-            
+            addContext(this, "licenseTermsId:" + licenseTermsId);
+
             // root IP: ipIdA
             ipIdA = await mintNFTCreateRootIPandAttachPIL("A", privateKeyA, licenseTermsId);
+            addContext(this, "Root IP - ipIdA:" + ipIdA);
             // ipIdB is ipIdA's derivative IP
             ipIdB = await mintNFTAndRegisterDerivative("B", privateKeyB, [ipIdA], [licenseTermsId]);
+            addContext(this, "ipIdA's derivative IP - ipIdB:" + ipIdB);
             // ipIdC is ipIdB's derivative IP
-            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]); 
+            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]);
+            addContext(this, "ipIdB's derivative IP - ipIdC:" + ipIdC);
             // ipIdD is ipIdC's derivative IP
-            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);               
-        });
-
-        step("ipIdA collect royalty tokens from ipIdB's vault account", async function () {
-            await checkRoyaltyTokensCollected("A", ipIdA, ipIdB, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("ipIdA collect royalty tokens from ipIdC's vault account", async function () {
-            await checkRoyaltyTokensCollected("A", ipIdA, ipIdC, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("ipIdA collect royalty tokens from ipIdD's vault account", async function () {
-            await checkRoyaltyTokensCollected("A", ipIdA, ipIdD, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("ipIdB collect royalty tokens from ipIdC's vault account", async function () {
-            await checkRoyaltyTokensCollected("B", ipIdB, ipIdC, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("ipIdB collect royalty tokens from ipIdD's vault account", async function () {
-            await checkRoyaltyTokensCollected("B", ipIdB, ipIdD, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("ipIdC collect royalty tokens from ipIdD's vault account", async function () {
-            await checkRoyaltyTokensCollected("C", ipIdC, ipIdD, BigInt(commercialRevShare/100 * TOTAL_RT_SUPPLY));
-        });
-
-        step("Transfer token to EOA - ipIdC to ipIdA", async function () {
-            console.log((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 4)
-            await transferTokenToEOA("C", ipIdC, accountA.address, BigInt((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 4));
-        });
-
-        step("Transfer token to EOA - ipIdC to ipIdB", async function () {
-            console.log((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 4)
-            await transferTokenToEOA("C", ipIdC, accountB.address, BigInt((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 4));
-        });
-
-        step("Transfer token to EOA - ipIdC to ipIdC", async function () {
-            console.log((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 2)
-            await transferTokenToEOA("C", ipIdC, accountC.address, BigInt((100 - 2 * commercialRevShare)/100 * TOTAL_RT_SUPPLY / 4));
-        });
-               
-        step("ipIdD pay royalty on behalf to ipIdC", async function () {
-            const response = await expect(
-                payRoyaltyOnBehalf("C", ipIdC, ipIdD, mintingFeeTokenAddress, payAmount, true)
-            ).to.not.be.rejected;
-            
-            expect(response.txHash).to.be.a("string").and.not.empty;
-        }); 
-
-        step("Capture snapshotId for ipIdC", async function () {
-            snapshotId1_ipIdC = await getSnapshotId("C", ipIdC);
-        });
-
-        step("Check claimable revenue A from C", async function () {
-            const expectedClaimableRevenue = BigInt((mintingFee + payAmount) * commercialRevShare / 100);
-            await checkClaimableRevenue("A", ipIdC, ipIdA, snapshotId1_ipIdC, expectedClaimableRevenue);
-        });
-
-        step("Check claimable revenue B from C", async function () {
-            const expectedClaimableRevenue = BigInt((mintingFee + payAmount) * commercialRevShare / 100);
-            await checkClaimableRevenue("B", ipIdC, ipIdB, snapshotId1_ipIdC, expectedClaimableRevenue);
-        });
-
-        step("Check claimable revenue C from C", async function () {
-            const expectedClaimableRevenue = BigInt((mintingFee + payAmount) * (100 - 2 * commercialRevShare)/100 /4);
-            await checkClaimableRevenue("C", ipIdC, ipIdC, snapshotId1_ipIdC, expectedClaimableRevenue);
-        });
-
-        step("Claim revenue by EOA A from C", async function () {
-            const expectedClaimableToken = BigInt((mintingFee + payAmount) * ((100 - 2 * commercialRevShare) / 100) / 4);
-            await claimRevenueByEOA("A", [snapshotId1_ipIdC], ipIdC, expectedClaimableToken);            
-        });        
-
-        step("Claim revenue by EOA B from C", async function () {
-            const expectedClaimableToken = BigInt((mintingFee + payAmount) * ((100 - 2 * commercialRevShare) / 100) / 4);
-            await claimRevenueByEOA("B", [snapshotId1_ipIdC], ipIdC, expectedClaimableToken);            
-        });
-
-        step("Claim revenue by EOA C from C", async function () {
-            const expectedClaimableToken = BigInt((mintingFee + payAmount) * ((100 - 2 * commercialRevShare) / 100) / 4);
-            await claimRevenueByEOA("C", [snapshotId1_ipIdC], ipIdC, expectedClaimableToken);            
-        });
-    });
-            
-    describe("Commercial Remix PIL - Claim Minting Fee and Revenue by EOA2", function () {
-        const mintingFee = 600;
-        const payAmount = 2000;
-        const commercialRevShare = 10;
-        before("Register parent and derivative IP Assets", async function () {
-            // create license terms
-            const licenseTermsId = Number((await registerCommercialRemixPIL("A", mintingFee, commercialRevShare, mintingFeeTokenAddress, true)).licenseTermsId);
-            
-            // root IP: ipIdA
-            ipIdA = await mintNFTCreateRootIPandAttachPIL("A", privateKeyA, licenseTermsId);
-            // ipIdB is ipIdA's derivative IP
-            ipIdB = await mintNFTAndRegisterDerivative("B", privateKeyB, [ipIdA], [licenseTermsId]);
-            // ipIdC is ipIdB's derivative IP
-            ipIdC = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdB], [licenseTermsId]); 
-            // ipIdD is ipIdC's derivative IP
-            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);               
+            ipIdD = await mintNFTAndRegisterDerivative("C", privateKeyC, [ipIdC], [licenseTermsId]);
+            addContext(this, "ipIdC's derivative IP - ipIdD:" + ipIdD);               
         });
 
         step("Transfer token to EOA - ipIdC to ipIdA", async function () {
@@ -530,6 +447,22 @@ describe("SDK E2E Test - Royalty", function () {
         step("Claim revenue by EOA C from C", async function () {
             const expectedClaimableToken = BigInt((mintingFee + payAmount) * ((100 - 2 * commercialRevShare) / 100) / 4);
             await claimRevenueByEOA("C", [snapshotId1_ipIdC], ipIdC, expectedClaimableToken);            
+        });
+
+        step("Claim revenue by IPA A from C", async function () {
+            const expectedClaimableToken = BigInt((mintingFee + payAmount) * commercialRevShare / 100);
+            await claimRevenueByIPA("A", [snapshotId1_ipIdC], ipIdC, ipIdA, expectedClaimableToken);            
+        });        
+
+        step("Claim revenue by IPA B from C", async function () {
+            const expectedClaimableToken = BigInt((mintingFee + payAmount) * commercialRevShare / 100);
+            await claimRevenueByIPA("B", [snapshotId1_ipIdC], ipIdC, ipIdB, expectedClaimableToken);            
+        });
+
+        step("Claim revenue by IPA C from C", async function () {
+            const expectedClaimableToken = BigInt((mintingFee + payAmount) * (100 - 2 * commercialRevShare)/100 /4);
+            await claimRevenueByIPA("C", [snapshotId1_ipIdC], ipIdC, ipIdC, expectedClaimableToken);            
         });
     });
 });
+

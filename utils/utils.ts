@@ -355,7 +355,7 @@ export async function getTotalRTSupply(): Promise<number> {
   };
 
   const result = await publicClient.readContract(requestArgs);
-  console.log(result);
+  console.log(`TOTAL_RT_SUPPLY: ${result}`);
 
   return Number(result);
 };
