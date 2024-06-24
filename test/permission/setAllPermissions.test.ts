@@ -11,7 +11,7 @@ import '../setup';
 let tokenIdA: string;
 let ipIdA: Address;
 
-describe.only('SDK Test', function () {
+describe('SDK Test', function () {
     describe('Test permission.setAllPermissions Function', async function () {
         before("Mint NFT and Register IP Asset",async function () {
             tokenIdA = await mintNFTWithRetry(privateKeyA);
