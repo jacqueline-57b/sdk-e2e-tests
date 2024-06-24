@@ -6,7 +6,7 @@ import '../setup';
 import { createNFTCollection } from '../../utils/sdkUtils';
 import { accountA, mintingFeeTokenAddress } from '../../config/config';
 
-describe.only("SDK Test", function () {
+describe("SDK Test", function () {
     describe("Create NFT Collection - nftClient.createNFTCollection", async function () {
         it("Create NFT collection", async function () {
             const response = await expect(
