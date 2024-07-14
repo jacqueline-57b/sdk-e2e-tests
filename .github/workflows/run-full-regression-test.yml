@@ -67,7 +67,7 @@ jobs:
     - name: Get test report name
       id: get-report-name
       run: |
-        REPORT_PATH=$(ls ./test-results/*.html)
+        REPORT_PATH=$(ls ./test-reports/*.html)
         REPORT_NAME=$(basename "$REPORT_PATH")
         echo "Report name: $REPORT_NAME"
         echo "::set-output name=report_name::$REPORT_NAME"
