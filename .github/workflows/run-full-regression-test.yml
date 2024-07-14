@@ -67,7 +67,8 @@ jobs:
     - name: Get test report name
       id: get-report-name
       run: |
-        REPORT_NAME=$(ls ./test-reports/*.html)
+        REPORT_PATH=$(ls ./test-results/*.html)
+        REPORT_NAME=$(basename "$REPORT_PATH")
         echo "Report name: $REPORT_NAME"
         echo "::set-output name=report_name::$REPORT_NAME"
 
@@ -78,3 +79,33 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         publish_dir: ./test-reports
         publish_branch: gh-pages
+
+    - name: Push Slack Notification
+      uses: slackapi/slack-github-action@v1.25.0
+      with:
+        channel-id: "C05HPKKNDCN"
+        payload: |
+          {
+            "text": "${{ github.repository }}: API Integration Tests have been completed. Check the results at https://jacqueline-57b.github.io/${{ github.repository }}/${{ steps.get-report-name.outputs.report_name }}",
+            "blocks": [
+              { "type": "divider" },
+              {
+                "type": "image",
+                "title": {
+                  "type": "plain_text",
+                  "text": "SDK Regression Test Results"
+                },
+                "image_url": "http://www.quickmeme.com/img/b9/b9848df257b95cd39585368475a4b4e4a3a8c774f7390226daecb79b912087ad.jpg",
+                "alt_text": "SDK Regression Test Results"
+              },
+              {
+                "type": "section",
+                "text": {
+                  "type": "mrkdwn",
+                  "text":"${{ github.repository }}: SDK Regression Test Result have been completed. \nCheck the results at https://jacqueline-57b.github.io/${{ github.repository }}/${{ steps.get-report-name.outputs.report_name }}" 
+                }
+              }
+            ]
+          }
+      env:
+        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
