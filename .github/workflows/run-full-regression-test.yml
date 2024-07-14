@@ -71,6 +71,10 @@ jobs:
         REPORT_NAME=$(basename "$REPORT_PATH")
         echo "Report name: $REPORT_NAME"
         echo "::set-output name=report_name::$REPORT_NAME"
+    
+    - name: Set repository name
+      id: set-repo-name
+      run: echo "REPO_NAME=${GITHUB_REPOSITORY##*/}" >> $GITHUB_ENV
 
     - name: Deploy report to GitHub Pages
       if: always()
@@ -86,7 +90,7 @@ jobs:
         channel-id: "C05HPKKNDCN"
         payload: |
           {
-            "text": "${{ github.repository }}: API Integration Tests have been completed. Check the results at https://jacqueline-57b.github.io/${{ github.repository }}/${{ steps.get-report-name.outputs.report_name }}",
+            "text": "${{ github.repository }}: SDK regression test have been completed. Check the results at https://jacqueline-57b.github.io/${{ env.REPO_NAME }}/${{ steps.get-report-name.outputs.report_name }}",
             "blocks": [
               { "type": "divider" },
               {
@@ -102,7 +106,7 @@ jobs:
                 "type": "section",
                 "text": {
                   "type": "mrkdwn",
-                  "text":"${{ github.repository }}: SDK Regression Test Result have been completed. \nCheck the results at https://jacqueline-57b.github.io/${{ github.repository }}/${{ steps.get-report-name.outputs.report_name }}" 
+                  "text":"${{ github.repository }}: SDK Regression Test Result have been completed. \nCheck the results at https://jacqueline-57b.github.io/${{ env.REPO_NAME }}/${{ steps.get-report-name.outputs.report_name }}" 
                 }
               }
             ]
