@@ -73,6 +73,11 @@ jobs:
 
         cp -R ./test-reports/* $folder_name
 
+    - name: test
+      id: echo-echo-echo
+      run: |
+        echo ${{ steps.create_folder.outputs.folder_name }}
+
     # Deploy report to GitHub Pages
     - name: Deploy report to GitHub Pages
       if: always()
