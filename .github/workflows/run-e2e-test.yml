@@ -72,15 +72,7 @@ jobs:
         
         mkdir -p ./tmp/$folder_name
         cp -R ./test-reports/* ./tmp/$folder_name
-
-        echo "::set-output name=folder_name::$folder_name"
-
-    - name: test
-      id: echo-echo-echo
-      run: |
-        echo ${{ steps.create_folder.outputs.folder_name }}
-        cd ./tmp/${{ steps.create_folder.outputs.folder_name }}
-        ls -al
+        cp -R ./template/l1-test-report-template.html ./tmp/$folder_name/l1-test-report.html
 
     # Deploy report to GitHub Pages
     - name: Deploy report to GitHub Pages
