@@ -22,7 +22,7 @@ let licenseTokenId2: bigint;
 let licenseTokenId3: bigint;
 
 describe("SDK E2E Test - Dispute Module", function () {
-    describe("IP Asset is IN_DISPUTE", async function () {
+    describe.only("IP Asset is IN_DISPUTE", async function () {
         before("Register IP assets and raise dispute", async function () {
             const tokenIdA = await mintNFTWithRetry(privateKeyA);
             checkMintResult(tokenIdA);
