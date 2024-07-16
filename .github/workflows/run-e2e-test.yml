@@ -73,6 +73,7 @@ jobs:
 
         cp -R ./test-reports/* $folder_name
 
+    # Deploy report to GitHub Pages
     - name: Deploy report to GitHub Pages
       if: always()
       uses: peaceiris/actions-gh-pages@v4
