@@ -71,7 +71,7 @@ jobs:
         echo "Folder name: $folder_name"
         
         mkdir -p ./tmp/$folder_name
-        cp -R ./test-reports/* $folder_name
+        cp -R ./test-reports/* ./tmp/$folder_name
 
         echo "::set-output name=folder_name::$folder_name"
 
