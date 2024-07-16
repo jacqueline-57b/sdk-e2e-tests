@@ -78,6 +78,6 @@ jobs:
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ${{ steps.create_folder.outputs.folder_name }}
+        publish_dir: ./${{ steps.create_folder.outputs.folder_name }}
         publish_branch: gh-pages
         keep_files: true
