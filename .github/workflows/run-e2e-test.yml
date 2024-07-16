@@ -69,9 +69,11 @@ jobs:
       run: |
         folder_name=$(date +%Y%m%d)
         echo "Folder name: $folder_name"
+        
         mkdir -p $folder_name
-
         cp -R ./test-reports/* $folder_name
+
+        echo "::set-output name=folder_name::$folder_name"
 
     - name: test
       id: echo-echo-echo
