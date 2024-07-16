@@ -2,7 +2,7 @@ name: Run E2E Test
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "add-workflow-2" ]
 
   pull_request:
     branches: [ "main" ]
@@ -63,3 +63,20 @@ jobs:
         path: |
           ./test-reports
       if: always()
+
+    - name: Copy report to date folder
+      id: create_folder
+      run: |
+        folder_name=$(date +%Y%m%d)
+        mkdir -p $folder_name
+
+        cp -R mochawesome-report/. $folder_name
+
+    - name: Deploy report to GitHub Pages
+      if: always()
+      uses: peaceiris/actions-gh-pages@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ${{ steps.create_folder.outputs.folder_name }}
+        publish_branch: gh-pages
+        keep_files: true
