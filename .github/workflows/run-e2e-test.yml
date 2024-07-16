@@ -70,7 +70,7 @@ jobs:
         folder_name=$(date +%Y%m%d)
         echo "Folder name: $folder_name"
         
-        mkdir -p $folder_name
+        mkdir -p ./tmp/$folder_name
         cp -R ./test-reports/* $folder_name
 
         echo "::set-output name=folder_name::$folder_name"
@@ -79,7 +79,7 @@ jobs:
       id: echo-echo-echo
       run: |
         echo ${{ steps.create_folder.outputs.folder_name }}
-        cd ${{ steps.create_folder.outputs.folder_name }}
+        cd ./tmp/${{ steps.create_folder.outputs.folder_name }}
         ls -al
 
     # Deploy report to GitHub Pages
@@ -88,6 +88,6 @@ jobs:
       uses: peaceiris/actions-gh-pages@v4
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ${{ steps.create_folder.outputs.folder_name }}
+        publish_dir: ./tmp
         publish_branch: gh-pages
         keep_files: true
