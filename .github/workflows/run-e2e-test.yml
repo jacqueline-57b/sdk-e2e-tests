@@ -2,7 +2,7 @@ name: Run E2E Test
 
 on:
   push:
-    branches: [ "add-workflow-2" ]
+    branches: [ "add-workflow-2", "refactor-report"]
 
   pull_request:
     branches: [ "main" ]
@@ -20,6 +20,12 @@ jobs:
     steps:
     - name: Check Out Repository Code
       uses: actions/checkout@v4
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        distribution: zulu
+        java-version: 21
 
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v4
@@ -61,25 +67,30 @@ jobs:
       with:
         name: sdk-sepolia-test-report
         path: |
-          ./test-reports
+          ./allure-results
       if: always()
-
-    - name: Copy report to date folder
-      id: create_folder
-      run: |
-        folder_name=$(date +%Y%m%d)
-        echo "Folder name: $folder_name"
-        
-        mkdir -p ./tmp/$folder_name
-        cp -R ./test-reports/* ./tmp/$folder_name
-        cp -R ./template/l1-test-report-template.html ./tmp/$folder_name/l1-test-report.html
 
     # Deploy report to GitHub Pages
-    - name: Deploy report to GitHub Pages
+    - name: Load test report history
+      uses: actions/checkout@v3
       if: always()
+      continue-on-error: true
+      with:
+        ref: gh-pages
+        path: gh-pages
+
+    - name: Build test report
+      uses: simple-elf/allure-report-action@v1.7
+      if: always()
+      with:
+        gh_pages: gh-pages
+        allure_history: allure-history
+        allure_results: build/allure-results
+
+    - name: Publish test report
       uses: peaceiris/actions-gh-pages@v4
+      if: always()
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./tmp
         publish_branch: gh-pages
-        keep_files: true
+        publish_dir: allure-history

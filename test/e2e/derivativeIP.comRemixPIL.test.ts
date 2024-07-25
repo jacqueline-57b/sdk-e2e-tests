@@ -22,7 +22,7 @@ let licenseTokenIdB: string;
 const waitForTransaction: boolean = true;
 
 describe("SDK E2E Test - Register Derivative IP Asset with Commercial Remix PIL", function () {
-    describe("@smoke Register a derivative IP asset with/without license tokens", async function () {
+    describe.only("@smoke Register a derivative IP asset with/without license tokens", async function () {
         step("Mint a NFT to Wallet A and get a tokenId (tokenIdA)", async function () {
             tokenIdA = await mintNFTWithRetry(privateKeyA);
             checkMintResult(tokenIdA);
