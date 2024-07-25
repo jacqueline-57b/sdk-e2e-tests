@@ -9,9 +9,11 @@ chai.use(chaiAsPromised);
 import '../setup';
 import { Hex } from 'viem';
 import { comRemixLicenseTermsId1 } from '../setup';
+require("mocha-allure-reporter");
+declare const allure: any;
 
 let tokenIdA: string;
-let tokenIdB: string;
+let tokenIdB: string; 
 let tokenIdC: string;
 let ipIdA: Hex;
 let ipIdB: Hex;
@@ -23,36 +25,60 @@ const waitForTransaction: boolean = true;
 
 describe("SDK E2E Test - Register Derivative IP Asset with Commercial Remix PIL", function () {
     describe.only("@smoke Register a derivative IP asset with/without license tokens", async function () {
-        step("Mint a NFT to Wallet A and get a tokenId (tokenIdA)", async function () {
+        allure.step("Mint a NFT to Wallet A and get a tokenId (tokenIdA)", async function (){
             tokenIdA = await mintNFTWithRetry(privateKeyA);
             checkMintResult(tokenIdA);
 
             expect(tokenIdA).not.empty;
         });
+        // step("Mint a NFT to Wallet A and get a tokenId (tokenIdA)", async function () {
+        //     tokenIdA = await mintNFTWithRetry(privateKeyA);
+        //     checkMintResult(tokenIdA);
 
-        step("Wallet A register an IP Asset with tokenIdA and get an ipId (ipIdA)", async function () {
+        //     expect(tokenIdA).not.empty;
+        // });
+
+        allure.step("Wallet A register an IP Asset with tokenIdA and get an ipId (ipIdA)", async function () {
             const response = await expect(
                 registerIpAsset("A", nftContractAddress, tokenIdA, waitForTransaction)
             ).to.not.be.rejected;
-
             expect(response.txHash).to.be.a("string").and.not.empty;
             expect(response.ipId).to.be.a("string").and.not.empty;
 
             ipIdA = response.ipId;
-        });
+        }); 
 
-        step("Wallet A attach comRemixLicenseTermsId1(commercial remix PIL) to ipIdA", async function () {
+        // step("Wallet A register an IP Asset with tokenIdA and get an ipId (ipIdA)", async function () {
+        //     const response = await expect(
+        //         registerIpAsset("A", nftContractAddress, tokenIdA, waitForTransaction)
+        //     ).to.not.be.rejected;
+
+        //     expect(response.txHash).to.be.a("string").and.not.empty;
+        //     expect(response.ipId).to.be.a("string").and.not.empty;
+
+        //     ipIdA = response.ipId;
+        // });
+
+        allure.step("Wallet A attach comRemixLicenseTermsId1(commercial remix PIL) to ipIdA", async function () {
             const response = await expect(
                 attachLicenseTerms("A", ipIdA, comRemixLicenseTermsId1, waitForTransaction)
             ).to.not.be.rejected;
 
-            expect(response.txHash).to.be.a("string").and.not.empty;
+            expect(response.txHash).to.be.a("string").and.not.empty;            
         });
+        // step("Wallet A attach comRemixLicenseTermsId1(commercial remix PIL) to ipIdA", async function () {
+        //     const response = await expect(
+        //         attachLicenseTerms("A", ipIdA, comRemixLicenseTermsId1, waitForTransaction)
+        //     ).to.not.be.rejected;
 
-        step("Wallet A mint a license token with the receiverAddress set as Wallet B, get a licenseTokenId (licenseTokenIdA)", async function () {
+        //     expect(response.txHash).to.be.a("string").and.not.empty;
+        // });
+
+        allure.step("Wallet A mint a license token with the receiverAddress set as Wallet B, get a licenseTokenId (licenseTokenIdA)", async function () {
             const response = await expect(
-                mintLicenseTokens("A", ipIdA, comRemixLicenseTermsId1, 2, accountB.address, waitForTransaction)
+                mintLicenseTokens("A", ipIdA, comRemixLicenseTermsId1, 1, accountB.address, waitForTransaction)
             ).to.not.be.rejected;
+
 
             expect(response.txHash).to.be.a("string").and.not.empty;
             expect(response.licenseTokenIds).to.be.a("array").and.to.have.lengthOf(2);
@@ -60,12 +86,30 @@ describe("SDK E2E Test - Register Derivative IP Asset with Commercial Remix PIL"
             licenseTokenIdA= response.licenseTokenIds[0];
         });
 
-        step("Mint a NFT to Wallet B and get a tokenId (tokenIdB)", async function () {
+        // step("Wallet A mint a license token with the receiverAddress set as Wallet B, get a licenseTokenId (licenseTokenIdA)", async function () {
+        //     const response = await expect(
+        //         mintLicenseTokens("A", ipIdA, comRemixLicenseTermsId1, 2, accountB.address, waitForTransaction)
+        //     ).to.not.be.rejected;
+
+        //     expect(response.txHash).to.be.a("string").and.not.empty;
+        //     expect(response.licenseTokenIds).to.be.a("array").and.to.have.lengthOf(2);
+
+        //     licenseTokenIdA= response.licenseTokenIds[0];
+        // });
+
+        allure.step("Mint a NFT to Wallet B and get a tokenId (tokenIdB)", async function () {
             tokenIdB = await mintNFTWithRetry(privateKeyB);
             checkMintResult(tokenIdB);
 
             expect(tokenIdB).not.empty;
         });
+
+        // step("Mint a NFT to Wallet B and get a tokenId (tokenIdB)", async function () {
+        //     tokenIdB = await mintNFTWithRetry(privateKeyB);
+        //     checkMintResult(tokenIdB);
+
+        //     expect(tokenIdB).not.empty;
+        // });
 
         step("Wallet B register an IP Asset with tokenIdB and get an ipId (ipIdB)", async function () {
             const response = await expect(
