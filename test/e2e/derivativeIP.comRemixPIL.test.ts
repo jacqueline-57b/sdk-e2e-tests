@@ -9,8 +9,7 @@ chai.use(chaiAsPromised);
 import '../setup';
 import { Hex } from 'viem';
 import { comRemixLicenseTermsId1 } from '../setup';
-require("mocha-allure-reporter");
-declare const allure: any;
+import allure from 'allure-js-commons';
 
 let tokenIdA: string;
 let tokenIdB: string; 
